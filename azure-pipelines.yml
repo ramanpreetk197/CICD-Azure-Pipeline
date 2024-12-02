@@ -1,0 +1,48 @@
+trigger:
+- main
+
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: Build
+    displayName: 'Build the Function App'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: UseDotNet@2
+      inputs:
+        packageType: 'sdk'
+        version: '8.x' 
+    - script: |
+        dotnet restore
+        dotnet build --configuration Release
+      displayName: 'Build the Azure Function'
+
+- stage: Test
+  displayName: 'Test Stage'
+  dependsOn: Build
+  jobs:
+  - job: Test
+    displayName: 'Run Unit Tests'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - script: |
+        dotnet test --configuration Release
+      displayName: 'Run Tests'
+
+# - stage: Deploy
+#   displayName: 'Deploy to Azure'
+#   dependsOn: Test
+#   jobs:
+#   - job: Deploy
+#     displayName: 'Deploy Function to Azure'
+#     pool:
+#       vmImage: 'windows-latest'
+#     steps:
+#     - task: AzureFunctionApp@1
+#       inputs:
+#         azureSubscription: '<your-azure-service-connection>' # Replace with your service connection name
+#         appName: '<your-function-app-name>' # Replace with your Azure Function App name
+#         package: '$(System.DefaultWorkingDirectory)/**/*.zip'
