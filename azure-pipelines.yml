@@ -32,17 +32,17 @@ stages:
         dotnet test --configuration Release
       displayName: 'Run Tests'
 
-# - stage: Deploy
-#   displayName: 'Deploy to Azure'
-#   dependsOn: Test
-#   jobs:
-#   - job: Deploy
-#     displayName: 'Deploy Function to Azure'
-#     pool:
-#       vmImage: 'windows-latest'
-#     steps:
-#     - task: AzureFunctionApp@1
-#       inputs:
-#         azureSubscription: '<your-azure-service-connection>' # Replace with your service connection name
-#         appName: '<your-function-app-name>' # Replace with your Azure Function App name
-#         package: '$(System.DefaultWorkingDirectory)/**/*.zip'
+- stage: Deploy
+  displayName: 'Deploy to Azure'
+  dependsOn: Test
+  jobs:
+  - job: Deploy
+    displayName: 'Deploy Function to Azure'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+    - task: AzureFunctionApp@1
+      inputs:
+        azureSubscription: '<Azure for Students>' 
+        appName: '<HelloWorldFunction>' 
+        package: '$(System.DefaultWorkingDirectory)/**/*.zip'
